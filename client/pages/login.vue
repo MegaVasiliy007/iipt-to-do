@@ -17,7 +17,7 @@
             <span v-show="authError" class="form__errorText">Неверный логин и/или пароль</span>
           </label>
         </div>
-        <button @click.prevent="authorization" class="form__button form__button_auth button_accent">Войти</button>
+        <button @click.prevent="authorization" class="form__button form__button_auth button">Войти</button>
       </div>
 
       <div class="form__component" :class="{form__component_active: isRegistration}">
@@ -38,7 +38,7 @@
             <span v-show="passwordMatchError" class="form__errorText">Пароли не совпадают</span>
           </label>
         </div>
-        <button @click.prevent="registration" class="form__button form__button_auth button_accent">Зарегистрироваться</button>
+        <button @click.prevent="registration" class="form__button form__button_auth button">Зарегистрироваться</button>
       </div>
     </form>
   </main>
@@ -48,7 +48,7 @@
 export default {
   name: 'Login',
   head: {
-    title: 'Авторизация - South Seaside',
+    title: 'Авторизация - ToDo',
   },
   beforeMount() {
     if (this.$store.getters['session/isLogin']) this.$router.replace({path: '/todo'});
@@ -184,6 +184,13 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
+	  border: none;
+  }
+
+  .form__toggleButton:hover + .form__title {
+	  background-color: var(--color-accent);
+	  color: #fff;
+	  transition: background-color .3s, color .3s;
   }
 
   .form__component_active .form__toggleButton {
@@ -206,7 +213,7 @@ export default {
     background-size: cover;
     padding: 24px 0;
     color: #000;
-    transition: padding .15s;
+    transition: padding .15s, background-color .3s, color .3s;
     background-position: center 10%;
   }
 

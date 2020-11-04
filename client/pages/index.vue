@@ -14,7 +14,7 @@
   export default {
     name: 'index',
     head: {
-      title: 'South Seaside',
+      title: 'ToDo',
     },
     computed: {
       ...mapGetters('session', ['isLogin']),

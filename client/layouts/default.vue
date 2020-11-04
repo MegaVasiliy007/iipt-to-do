@@ -18,20 +18,6 @@ export default {
   head: {
     link: [
       {
-        rel: 'preload',
-        href: require('~/static/fonts/exo-2-regular.woff2'),
-        as: 'font',
-        type: 'font/woff2',
-        crossorigin: 'anonymous'
-      },
-      {
-        rel: 'preload',
-        href: require('~/static/fonts/exo-2-bold.woff2'),
-        as: 'font',
-        type: 'font/woff2',
-        crossorigin: 'anonymous'
-      },
-      {
         rel: 'icon',
         href: require('~/static/images/favicon.png'),
         type: 'image/png',
@@ -54,17 +40,14 @@ export default {
 <style>
   :root {
     /* Colors */
-    --color-accent: #00AFB9;
+
+    --color-accent: #007DF1;
     --color-green1:  #095334;
     --color-green2: #D1EDE2;
     --color-gray1:  #333333;
     --color-gray2:  #BDBDBD;
     --color-error:  #EB5757;
     --color-white:  #FFFFFF;
-
-    /* Fonts */
-    --openSans: 'Open Sans', 'Arial', sans-serif;
-    --Exo2:     'Exo 2', sans-serif;
 
     /* Other */
     --container-width: 92%;
@@ -78,6 +61,7 @@ export default {
   }
 
   * {
+	  font-family: 'Open Sans', 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     line-height: 1.32;
@@ -90,7 +74,7 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     min-height: 100vh;
-    font: normal 16px/132% var(--openSans);
+    font: normal 16px/132% 'Open Sans', 'Arial', sans-serif;
     color: var(--color-gray1);
     word-break: break-word;
     overflow-x: hidden;
@@ -111,12 +95,10 @@ export default {
   }
 
   h1 {
-    font-family: var(--Exo2);
     font-size: 48px;
   }
 
   h2 {
-    font-family: var(--Exo2);
     font-size: 32px;
     font-weight: 600;
   }
@@ -127,18 +109,23 @@ export default {
     box-sizing: border-box;
     text-align: center;
     font-size: 14px;
-    color: var(--color-gray1);
+    color: var(--color-accent);
     cursor: pointer;
     transition: background-color .1s;
     background-color: transparent;
     outline: none;
-    border: none;
+	  border: 1px solid var(--color-accent);
+	  border-radius: 25px;
+	  padding: 8px;
+  }
+
+  .button:hover {
+	  background-color: var(--color-accent);
+	  color: #fff;
   }
 
   .button_accent {
-    padding: 8px 0;
     background-color: var(--color-accent);
-    border-radius: 5px;
     color: #fff;
   }
 
@@ -190,10 +177,13 @@ export default {
   .form__input {
     width: 100%;
     padding: 8px 12px;
-    font-family: var(--Exo2);
     font-size: 14px;
     border: 1px solid var(--color-gray2);
-    border-radius: 5px;
+    border-radius: 25px;
+  }
+
+  .form__input:hover {
+	  border-color: var(--color-accent);
   }
 
   .form__input:focus {
@@ -225,7 +215,6 @@ export default {
   }
 
   *::placeholder {
-    font-family: var(--Exo2);
     color: var(--color-gray2);
   }
 </style>
@@ -241,38 +230,5 @@ export default {
     src: local('Open Sans Regular'), local('OpenSans-Regular'),
       url('~static/fonts/open-sans-regular.woff2') format('woff2'),
       url('~static/fonts/open-sans-regular.woff') format('woff');
-  }
-
-  /* exo-2-regular - latin_cyrillic */
-  @font-face {
-    font-family: 'Exo 2';
-    font-display: swap;
-    font-style: normal;
-    font-weight: 400;
-    src: local(''),
-      url('~static/fonts/exo-2-regular.woff2') format('woff2'),
-      url('~static/fonts/exo-2-regular.woff') format('woff');
-  }
-
-  /* exo-2-semi-bold - latin_cyrillic */
-  @font-face {
-    font-family: 'Exo 2';
-    font-display: swap;
-    font-style: normal;
-    font-weight: 600;
-    src: local(''),
-      url('~static/fonts/exo-2-semi-bold.woff2') format('woff2'),
-      url('~static/fonts/exo-2-semi-bold.woff') format('woff');
-  }
-
-  /* exo-2-bold - latin_cyrillic */
-  @font-face {
-    font-family: 'Exo 2';
-    font-display: swap;
-    font-style: normal;
-    font-weight: 800;
-    src: local(''),
-      url('~static/fonts/exo-2-bold.woff2') format('woff2'),
-      url('~static/fonts/exo-2-bold.woff') format('woff');
   }
 </style>

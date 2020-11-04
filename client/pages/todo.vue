@@ -1,8 +1,30 @@
 <template>
   <main class="page__todo container">
-    <div>
-      TODO
-    </div>
+	  <div class="todo__info">
+		  <div><button class="button__list" @click="changeTab" data-index="0" :class="{button__list_active: tab === 0}">Покупки</button> - <button class="button__list" @click="changeTab" data-index="1" :class="{button__list_active: tab === 1}">Встречи</button> - <button class="button__list" @click="changeTab" data-index="2" :class="{button__list_active: tab === 2}">Задачи</button></div>
+		  <button class="button__create button">Создать {{ createButton }}</button>
+	  </div>
+<div class="todo__list">
+	  <div v-if="tab === 0">
+		  <table>
+			  <tr v-for="shop of shops">
+				  <td>{{ new Date(shop.date) }}</td>
+				  <td>
+					  <ul>
+						  <li v-for="item of shop.items">{{ item.name }} </li>
+					  </ul>
+				  </td>
+				  <td>1</td>
+			  </tr>
+		  </table>
+	  </div>
+	  <div v-if="tab === 1">
+		  1
+	  </div>
+	  <div v-if="tab === 2">
+		  2
+	  </div>
+</div>
   </main>
 </template>
 
@@ -12,20 +34,39 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'todo',
   head: {
-    title: 'Карта - South Seaside',
+    title: 'Списки - ToDo',
   },
   computed: {
-    ...mapGetters('session', ['isLogin'])
+    ...mapGetters('session', ['isLogin', 'getLogin']),
+	  createButton() {
+    	switch (this.tab) {
+    		case 0:
+    			return 'список покупок';
+		    case 1:
+			    return 'встречу';
+		    case 2:
+			    return 'список задач';
+	    }
+	  },
   },
-  beforeMount() {
+  async beforeMount() {
     if (!this.$store.getters['session/isLogin']) this.$router.replace({path: '/login'});
+
+    const shop = await this.$axios.$get('/shop', { params: { login: this.getLogin } });
+    this.shops = shop.shops;
   },
   data() {
     return {
+    	tab: 0,
+	    shops: null,
+	    meeting: null,
+	    tasks: null
     }
   },
   methods: {
-
+  	changeTab(e) {
+  		this.tab = +e.currentTarget.dataset.index;
+	  }
   },
 };
 </script>
@@ -33,14 +74,14 @@ export default {
 <style scoped>
   .page__todo {
     margin: 42px 0 80px 0;
-    font-family: var(--Exo2);
+	  display: flex;
+	  justify-content: center;
   }
 
-  .map__info {
-    display: flex;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 600;
+  .todo__info {
+	  flex-direction: column;
+    font-size: 16px;
+    font-weight: 400;
   }
 
   .map__editIcon {
@@ -49,12 +90,36 @@ export default {
     vertical-align: middle;
   }
 
+  .button__create {
+	  margin-left: 10%;
+	  width: 80%;
+  }
+
+  .button__list {
+	  border: none;
+	  padding: inherit;
+	  font-size: 28px;
+	  color: #000;
+  }
+
+  .button__list:hover {
+	  color: var(--color-accent);
+  }
+
+  .button__list_active {
+	  color: var(--color-accent) !important;
+  }
+
+  .todo__list {
+
+  }
+
   @media (min-width: 1200px) {
     .page__todo {
       margin-top: 80px;
     }
 
-    .map__info {
+    .todo__info {
       font-size: 32px;
     }
 
@@ -62,92 +127,6 @@ export default {
       width: 24px;
       height: 24px;
       margin-top: 3px;
-    }
-  }
-
-  .map__formButton:focus .map__editIcon,
-  .map__editIcon:hover {
-    fill: var(--color-accent);
-    stroke: var(--color-accent);
-  }
-
-  .map__editIcon_saveIcon {
-    fill: #fff;
-    stroke: var(--color-gray1);
-  }
-
-  .map__formButton:focus .map__editIcon_saveIcon,
-  .map__editIcon_saveIcon:hover {
-    fill: #fff;
-  }
-
-  .formInfo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .formInfo__group {
-    display: grid;
-    grid-gap: 12px;
-    width: 100%;
-    max-width: 300px;
-    margin-right: 4px;
-  }
-
-  @media (min-width: 1200px) {
-    .formInfo__group {
-      grid-template-columns: 1fr 1fr;
-      max-width: 650px;
-    }
-  }
-
-  .map__formButton {
-    margin-left: 16px;
-  }
-
-  .map__toggle {
-    display: flex;
-    width: 100%;
-    margin-top: 22px;
-    margin-bottom: 16px;
-    overflow-x: auto;
-  }
-
-  .map__toggle::-webkit-scrollbar{
-    width: 0;
-  }
-
-  @media (min-width: 580px) {
-    .map__toggle {
-      justify-content: center;
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .map__toggle {
-      margin: 36px 0;
-    }
-  }
-
-  .map__toggleButton {
-    font-size: 18px;
-    font-weight: 600;
-    flex-shrink: 0;
-    outline: #015F7A;
-  }
-
-  .map__toggleButton + .map__toggleButton {
-    margin-left: 28px;
-  }
-
-  .map__toggleButton_active {
-    color: var(--color-accent);
-  }
-
-  @media (min-width: 1200px) {
-    .map__toggleButton + .map__toggleButton {
-      margin-left: 70px;
     }
   }
 </style>

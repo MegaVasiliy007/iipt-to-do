@@ -9,12 +9,12 @@
     <nav id="nav" class="nav" :class="{nav_active: menu}">
       <button @click="closeMenu" class="nav__close" aria-label="Закрыть меню"><svg-icon name="cross" class="nav__crossIcon" aria-hidden="true"/></button>
       <ul @click="closeMenu" class="nav__list">
-        <li><n-link to='/todo' class="nav__link" :class="{nav__link_active: isPage('todo')}">Список</n-link></li>
+        <li><n-link to='/todo' class="nav__link" :class="{nav__link_active: isPage('todo')}">Списки</n-link></li>
         <li v-if='!isLogin'>
           <n-link to='/login' class="nav__link" :class="{nav__link_active: isPage('login')}">Вход <svg-icon name="login" class="nav__loginIcon" aria-hidden="true"/></n-link>
         </li>
         <li v-else>
-          <button @click="logout" class="nav__link">Выйти<svg-icon name="logout" class="nav__loginIcon" aria-hidden="true"/></button>
+          <button @click="logout" class="nav__link button__exit">Выйти<svg-icon name="logout" class="nav__loginIcon" aria-hidden="true"/></button>
         </li>
       </ul>
     </nav>
@@ -145,10 +145,14 @@
 }
 
 .nav__link {
-  font-family: var(--Exo2);
   font-weight: 700;
   font-size: 48px;
   color: #fff;
+}
+
+.button__exit {
+	border: none;
+	padding: inherit;
 }
 
 @media (min-width: 1200px) {
