@@ -9,6 +9,6 @@ app
 	.use('/auth', require('./routers/auth'))
 	.use('/shop', require('./routers/shop'))
 	.use('/meeting', require('./routers/meeting'))
-	.use('/tasks', require('./routers/tasks'))
+	.use('/task', require('./routers/tasks'))
 
 app.listen(process.env.PORT || 8080, () => console.log('Listen on:', process.env.PORT || 8080));

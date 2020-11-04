@@ -12,20 +12,20 @@ module.exports = {
 		res.json({ status: 'OK', shops });
 	},
 
-	async create({ body: { login, date, list = [] } }, res) {
+	async create({ body: { login, date, items = [] } }, res) {
 		const [{ insertId: id }] = await db.query('INSERT INTO shop(login, date) VALUE (?, ?)', [login, new Date(date)]);
 
-		const items = [];
-		for (const name of list) {
+		const shops = [];
+		for (const name of items) {
 			const [{ insertId: it }] = await db.query('INSERT INTO items(list_id, name) VALUE (?, ?)', [id, name]);
-			items.push({ id: it, name });
+			shops.push({ id: it, name });
 		}
 
-		res.json({ status: 'OK', shop: { id, date, items } });
+		res.json({ status: 'OK', shop: { id, date, items: shops } });
 	},
 
-	async update({ params: { id }, body: { login, date, items } }, res) {
-		await db.query('UPDATE shop SET date = ? WHERE list_id = ? AND login = ?', [new Date(date), id, login]);
+	async update({ params: { id }, body: { date, items } }, res) {
+		await db.query('UPDATE shop SET date = ? WHERE list_id = ?', [new Date(date), id]);
 
 		for (const item of items) {
 			if (item.id)
@@ -39,7 +39,7 @@ module.exports = {
 		res.json({ status: 'OK', shop: {id, date, items } });
 	},
 
-	async delete({ params: { id }, body: { login } }, res) {
+	async delete({ params: { id } }, res) {
 		await db.query('DELETE FROM items WHERE list_id = ?', [id]);
 		await db.query('DELETE FROM shop WHERE list_id = ?', [id]);
 		res.json({ status: 'OK'});
