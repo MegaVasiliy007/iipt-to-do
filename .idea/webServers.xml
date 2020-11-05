@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="bd974722-1462-4896-8975-812d8fc7202c" name="vlos" url="http://todo.vlos.ru">
+        <fileTransfer rootFolder="/root" accessType="SFTP" host="185.17.121.212" port="22" sshConfigId="5c420cbe-21f4-4c26-a18d-fa13eacffe10" sshConfig="vlos" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

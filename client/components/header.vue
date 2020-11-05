@@ -121,9 +121,14 @@
 }
 
 .nav__close {
+  border: none;
   position: absolute;
   top: 26px;
   right: 15px;
+}
+
+.header__burger {
+  border: none;
 }
 
 .nav__crossIcon {

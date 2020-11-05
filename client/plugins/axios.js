@@ -3,5 +3,5 @@ export default ({$axios}) => {
         console.log('Making request to ' + config.url)
     })
 
-    $axios.setBaseURL('http://localhost:8080')
+    $axios.setBaseURL('https://apitodo.vlos.ru')
 }

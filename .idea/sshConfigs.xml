@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig host="185.17.121.212" id="5c420cbe-21f4-4c26-a18d-fa13eacffe10" keyPath="C:\vlosIron" port="22" customName="vlos" nameFormat="CUSTOM" username="root">
+        <option name="customName" value="vlos" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>

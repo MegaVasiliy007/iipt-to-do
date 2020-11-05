@@ -3,17 +3,17 @@
     <Logo class="footer__logo" />
     <ul class="social" aria-labelledby="socialDescription">
       <li>
-        <a href="https://t.me/southseaside" target="_blank" rel="noopener" aria-label="Телеграм">
+        <a href="https://t.me/" target="_blank" rel="noopener" aria-label="Телеграм">
           <svg-icon name="telegram" class="social__icon" aria-hidden="true"/>
         </a>
       </li>
       <li>
-        <a href="https://vk.com/south_seaside" target="_blank" rel="noopener" aria-label="Вконтакте">
+        <a href="https://vk.com/" target="_blank" rel="noopener" aria-label="Вконтакте">
           <svg-icon name="vk" class="social__icon" aria-hidden="true"/>
         </a>
       </li>
       <li>
-        <a href="https://www.instagram.com/southseasidetag/?hl=ru" target="_blank" rel="noopener" aria-label="Инстаграм">
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Инстаграм">
           <svg-icon name="instagram" class="social__icon" aria-hidden="true"/>
         </a>
       </li>

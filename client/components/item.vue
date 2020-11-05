@@ -11,7 +11,7 @@
     <div v-if="element.comment">{{ element.comment }}</div>
     <div class="shop-block__controls">
       <button @click="remove"><svg-icon name="cross" class="map__editIcon" aria-hidden="true"/></button>
-<!--      <button @click="edit"><svg-icon name="edit" class="map__editIcon" aria-hidden="true"/></button>-->
+      <button @click="edit"><svg-icon name="edit" class="map__editIcon" aria-hidden="true"/></button>
     </div>
   </div>
 </template>
@@ -47,7 +47,7 @@ export default {
       this.$emit('remove', {type: this.type, id: this.element.id});
     },
     edit() {
-      //
+      this.$emit('edit', {type: this.type, id: this.element.id});
     }
   }
 }

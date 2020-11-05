@@ -17,19 +17,19 @@
       <button @click="openCreateThing" class="button__create button">{{ createButton }}</button>
     </div>
     <div class="todo__list" v-if="tab === 0">
-        <Item v-for="shop of shop" :element="shop" :key="shop.id" type="shop" @remove="remove"/>
+        <Item v-for="shop of shop" :element="shop" :key="shop.id" type="shop" @remove="remove" @edit="openUpdateThing"/>
     </div>
     <div class="todo__list" v-if="tab === 1">
-      <Item v-for="meeting of meeting" :element="meeting" :key="meeting.id" type="meeting" @remove="remove"/>
+      <Item v-for="meeting of meeting" :element="meeting" :key="meeting.id" type="meeting" @remove="remove" @edit="openUpdateThing"/>
     </div>
     <div class="todo__list" v-if="tab === 2">
-      <Item v-for="task of task" :element="task" :key="task.id" type="task" @remove="remove"/>
+      <Item v-for="task of task" :element="task" :key="task.id" type="task" @remove="remove" @edit="openUpdateThing"/>
     </div>
     <Modal v-if="showModal" @close="closeModal">
       <template v-slot:body>
         <div class="modal__content" v-if="tab === 0">
           Дата и время
-          <input type="date" v-model="create.date" :min="calcMinDate"> <input v-model="create.time" type="time"><br>
+          <input type="date" v-model="create.date" class="form__input form__date" :min="calcMinDate"> <input v-model="create.time" class="form__input"type="time"><br>
           Список покупок
           <ol>
             <li v-for="(val, ind) in items">
@@ -40,7 +40,7 @@
         </div>
         <div class="modal__content" v-if="tab === 1">
           Дата и время
-          <input type="date" v-model="create.date" :min="calcMinDate"> <input v-model="create.time" type="time"><br>
+          <input type="date" v-model="create.date" class="form__input form__date" :min="calcMinDate"> <input v-model="create.time" class="form__input"type="time"><br>
           Название
           <input type="text" v-model.trim="create.name" class="form__input" placeholder="Написать...">
           Адрес
@@ -50,7 +50,7 @@
         </div>
         <div class="modal__content" v-if="tab === 2">
           Дата и время
-          <input type="date" v-model="create.date" :min="calcMinDate"> <input v-model="create.time" type="time"><br>
+          <input type="date" v-model="create.date" class="form__input" form__date :min="calcMinDate"> <input v-model="create.time" class="form__input"type="time"><br>
           Список задач
           <ol>
             <li v-for="(val, ind) in items">
@@ -62,7 +62,8 @@
       </template>
       <template v-slot:footer>
         <button class="button" @click="closeModal">Закрыть</button>
-        <button class="button" @click="createThing">{{ createButtonOrEdit }}</button>
+        <button v-if="create.id" class="button" @click="updateThing">{{ createButtonOrEdit }}</button>
+        <button v-else class="button" @click="createThing">{{ createButtonOrEdit }}</button>
       </template>
     </Modal>
   </main>
@@ -85,7 +86,7 @@ export default {
   computed: {
     ...mapGetters('session', ['isLogin', 'getLogin']),
     createButtonOrEdit() {
-      return this.createButton;
+      return this.create.id ? 'Сохранить' : this.createButton;
     },
     createButton() {
       return 'Создать ' + this.createButtonText;
@@ -138,7 +139,6 @@ export default {
     },
     async createThing() {
       if (!this.create.date || !this.create.time || (!this.create.name && !this.items.filter(el => el.name).length)) return;
-
       const params = { login: this.getLogin, ...(!!this.create.name && this.create), time: undefined, date: Date.parse(this.create.date+'T'+this.create.time)};
 
       if (this.items.filter(el => el.name).length) {
@@ -160,6 +160,41 @@ export default {
 
       this.closeModal();
     },
+    openUpdateThing({ type, id }) {
+      this.showModal = true;
+      const element = this[type].find(el => el.id === id);
+      const date = new Date(element.date)
+      this.create = {
+        ...element,
+        items: undefined,
+        date: date.getFullYear() + '-' + ('00' + (date.getMonth() + 1)).slice(-2) + '-' + ('00' + date.getDate()).slice(-2),
+        time: ('00' + date.getHours()).slice(-2) + ':' + ('00' + date.getMinutes()).slice(-2)
+      };
+      if (type !== 'meeting') this.items = [...element.items, {name: ''}];
+    },
+    async updateThing() {
+      if (!this.create.date || !this.create.time || (!this.create.name && !this.items.filter(el => el.name).length)) return;
+      const params = { login: this.getLogin, ...(!!this.create.name && this.create), id: undefined, time: undefined, date: Date.parse(this.create.date+'T'+this.create.time)};
+
+      if (this.items.filter(el => el.name).length) {
+        params.items = this.items.filter(el => el.name);
+      }
+
+      if (this.tab === 0) {
+        const data = await this.$axios.$put('/shop/'+this.create.id, params);
+        this.shop[this.shop.findIndex(el => el.id === this.create.id)] = data.shop;
+      }
+      if (this.tab === 1 && this.create.name && this.create.address && this.create.comment) {
+        const data = await this.$axios.$put('/meeting/'+this.create.id, params);
+        this.meeting[this.meeting.findIndex(el => el.id === this.create.id)] = data.meeting;
+      }
+      if (this.tab === 2) {
+        const data = await this.$axios.$put('/task/'+this.create.id, params);
+        this.task[this.task.findIndex(el => el.id === this.create.id)] = data.task;
+      }
+
+      this.closeModal();
+    },
     updateItems(ind) {
       console.log(ind);
       if (ind+1 !== this.items.length) return;
@@ -169,9 +204,6 @@ export default {
       console.log(ind);
       this.items.splice(ind, 1);
     },
-    // updateThing() {
-    //
-    // },
     remove({ type, id }) {
       this[type].splice(this[type].indexOf(id), 1);
     },
@@ -244,6 +276,10 @@ export default {
   margin-left: 20px;
   color: #000;
   font-size: 18px;
+}
+
+.form__date {
+  margin-bottom: 10px;
 }
 
 @media (min-width: 1200px) {

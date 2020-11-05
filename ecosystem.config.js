@@ -4,7 +4,7 @@ module.exports = {
             name: 'front-todo',
             cwd: '/root/todo/client',
             script: './node_modules/nuxt/bin/nuxt.js',
-            args: 'start`',
+            args: 'start',
             env: {
                 NODE_ENV: 'production',
                 NUXT_PORT: 3050
