@@ -201,17 +201,12 @@ export default {
   }
 
   .form__errorText {
-    display: none;
     margin-top: 2px;
     font-size: 14px;
     line-height: 1.5;
     text-align: left;
     color: var(--color-error);
     transition: visibility .1s;
-  }
-
-  .form__input_error + .form__errorText {
-    display: block;
   }
 
   *::placeholder {

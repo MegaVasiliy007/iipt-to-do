@@ -6,7 +6,7 @@ module.exports = {
 		const tasks = [];
 		for (const task of data) {
 			if (!tasks.find(el => el.id === task.list_id)) tasks.push({id: task.list_id, date: +task.date, items: []});
-			tasks.find(el => el.id === task.list_id).items.push({id: task.item_id, name: task.name});
+			tasks.find(el => el.id === task.list_id).items.push({id: task.item_id, name: task.name, done: task.done});
 		}
 
 		res.json({ status: 'OK', tasks });
@@ -18,7 +18,7 @@ module.exports = {
 		const tasks = [];
 		for (const name of items) {
 			const [{ insertId: it }] = await db.query('INSERT INTO items(list_id, name) VALUE (?, ?)', [id, name]);
-			tasks.push({ id: it, name });
+			tasks.push({ id: it, name, done: 0 });
 		}
 
 		res.json({ status: 'OK', task: { id, date, items: tasks } });
@@ -27,12 +27,20 @@ module.exports = {
 	async update({ params: { id }, body: { date, items } }, res) {
 		await db.query('UPDATE tasks SET date = ? WHERE list_id = ?', [new Date(date), id]);
 
+		const itemsDB = await db.query('SELECT item_id FROM items WHERE list_id = ?', id);
+
+		for (const { item_id: i } of itemsDB[0]) {
+			if (items.find(el => el.id === i)) continue;
+			await db.query('DELETE FROM items WHERE item_id = ?', [i])
+		}
+
 		for (const item of items) {
 			if (item.id)
-				await db.query('UPDATE items SET name = ? WHERE item_id = ? AND list_id = ?', [item.name, item.id, id]);
+				await db.query('UPDATE items SET name = ?, done = ? WHERE item_id = ? AND list_id = ?', [item.name, item.done, item.id, id]);
 			else {
 				const [{insertId: it}] = await db.query('INSERT INTO items(list_id, name) VALUE (?, ?)', [id, item.name]);
 				item.id = it;
+				item.done = 0;
 			}
 		}
 

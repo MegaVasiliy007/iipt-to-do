@@ -3,14 +3,14 @@
     <div class="shop-block__date">{{ date.date }}<br>{{ date.time }}</div>
     <div class="shop-block__items" v-if="element.items">
       <ol>
-        <li v-for="item of element.items">{{ item.name }}</li>
+        <li v-for="item of element.items"><input type="checkbox" disabled :checked="item.done"> - {{ item.name }}</li>
       </ol>
     </div>
     <div class="shop-block__items" v-if="element.name">{{ element.name }}</div>
     <div v-if="element.address">{{ element.address }}</div>
     <div v-if="element.comment">{{ element.comment }}</div>
     <div class="shop-block__controls">
-      <button @click="remove"><svg-icon name="cross" class="map__editIcon" aria-hidden="true"/></button>
+      <button @click="remove"><svg-icon name="cross" class="map__removeIcon" aria-hidden="true"/></button>
       <button @click="edit"><svg-icon name="edit" class="map__editIcon" aria-hidden="true"/></button>
     </div>
   </div>
@@ -22,11 +22,11 @@ export default {
   props: {
     element: {
       type: Object,
-      require: true
+      required: true
     },
     type: {
       type: String,
-      require: true
+      required: true
     }
   },
   computed: {
@@ -54,10 +54,24 @@ export default {
 </script>
 
 <style scoped>
+.map__removeIcon {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+}
+
+.map__removeIcon:hover {
+  fill: red;
+}
+
 .map__editIcon {
   width: 22px;
   height: 22px;
   vertical-align: middle;
+}
+
+.map__editIcon:hover {
+  fill: var(--color-accent);
 }
 
 .shop-block {

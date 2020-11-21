@@ -29,35 +29,45 @@
       <template v-slot:body>
         <div class="modal__content" v-if="tab === 0">
           Дата и время
-          <input type="date" v-model="create.date" class="form__input form__date" :min="calcMinDate"> <input v-model="create.time" class="form__input"type="time"><br>
+          <input type="date" v-model="create.date" class="form__input form__date" :class="{form__input_error: errors.date}" :min="calcMinDate"> <input v-model="create.time" class="form__input" :class="{form__input_error: errors.time}" type="time"><br>
+          <span v-show="errors.date || errors.time" class="form__errorText">Не указана дата или время</span><br>
           Список покупок
           <ol>
             <li v-for="(val, ind) in items">
-              <input type="text" v-model.trim="val.name" @change="updateItems(ind)" class="form__input">
-              <button v-if="items.length > 1" @click="removeItem(ind)" class="button__list"><svg-icon name="cross" class="map__editIcon" aria-hidden="true"/></button>
+              <input :disabled="val.id === undefined" type="checkbox" v-model="val.done">
+              <input type="text" v-model.trim="val.name" @change="updateItems(ind)" class="form__input" :class="{form__input_error: errors.items}">
+              <button :disabled="items.length < 2 || ind === items.length - 1"  @click="removeItem(ind)" class="button__list"><svg-icon name="cross" class="map__removeIcon" aria-hidden="true"/></button>
             </li>
           </ol>
+          <span v-show="errors.items" class="form__errorText">Пустой список покупок</span><br>
         </div>
         <div class="modal__content" v-if="tab === 1">
           Дата и время
-          <input type="date" v-model="create.date" class="form__input form__date" :min="calcMinDate"> <input v-model="create.time" class="form__input"type="time"><br>
+          <input type="date" v-model="create.date" class="form__input form__date" :class="{form__input_error: errors.date}" :min="calcMinDate"> <input v-model="create.time" class="form__input" :class="{form__input_error: errors.time}" type="time"><br>
+          <span v-show="errors.date || errors.time" class="form__errorText">Не указана дата или время</span><br>
           Название
-          <input type="text" v-model.trim="create.name" class="form__input" placeholder="Написать...">
+          <input type="text" v-model.trim="create.name" class="form__input" :class="{form__input_error: errors.name}" placeholder="Написать..."><br>
+          <span v-show="errors.name" class="form__errorText">Не указано название или слишком длинное</span><br>
           Адрес
-          <input type="text" v-model.trim="create.address" class="form__input" placeholder="Написать...">
+          <input type="text" v-model.trim="create.address" class="form__input" :class="{form__input_error: errors.address}" placeholder="Написать..."><br>
+          <span v-show="errors.address" class="form__errorText">Не указан адрес</span><br>
           Комментарий
-          <input type="text" v-model.trim="create.comment" class="form__input" placeholder="Написать...">
+          <input type="text" v-model.trim="create.comment" class="form__input" :class="{form__input_error: errors.comment}" placeholder="Написать..."><br>
+          <span v-show="errors.comment" class="form__errorText">Не указан комментарий</span><br>
         </div>
         <div class="modal__content" v-if="tab === 2">
           Дата и время
-          <input type="date" v-model="create.date" class="form__input" form__date :min="calcMinDate"> <input v-model="create.time" class="form__input"type="time"><br>
+          <input type="date" v-model="create.date" class="form__input form__date" :class="{form__input_error: errors.date}" :min="calcMinDate"> <input v-model="create.time" class="form__input" :class="{form__input_error: errors.time}" type="time"><br>
+          <span v-show="errors.date || errors.time" class="form__errorText">Не указана дата или время</span><br>
           Список задач
           <ol>
             <li v-for="(val, ind) in items">
-              <input type="text" v-model.trim="val.name" @change="updateItems(ind)" class="form__input">
-              <button v-if="items.length > 1" @click="removeItem(ind)" class="button__list"><svg-icon name="cross" class="map__editIcon" aria-hidden="true"/></button>
+              <input :disabled="val.id === undefined" type="checkbox" v-model="val.done">
+              <input type="text" v-model.trim="val.name" @change="updateItems(ind)" class="form__input" :class="{form__input_error: errors.items}">
+              <button :disabled="items.length < 2 || ind === items.length - 1" @click="removeItem(ind)" class="button__list"><svg-icon name="cross" class="map__removeIcon" aria-hidden="true"/></button>
             </li>
           </ol>
+          <span v-show="errors.items" class="form__errorText">Пустой список задач</span><br>
         </div>
       </template>
       <template v-slot:footer>
@@ -74,6 +84,7 @@ import Item from '../components/item';
 import Modal from '../components/modal';
 import {mapGetters} from 'vuex';
 
+//v-if="items.length > 1 && ind !== items.length - 1"
 export default {
   name: 'todo',
   head: {
@@ -126,6 +137,14 @@ export default {
       task: null,
       showModal: false,
       create: {},
+      errors: {
+        date: false,
+        time: false,
+        items: false,
+        name: false,
+        address: false,
+        comment: false
+      },
       items: []
     }
   },
@@ -135,10 +154,20 @@ export default {
     },
     openCreateThing() {
       this.showModal = true;
-      if (this.tab !== 1) this.items = [{name: ''}];
+      if (this.tab !== 1) this.items = [{name: '', done: 0}];
     },
     async createThing() {
-      if (!this.create.date || !this.create.time || (!this.create.name && !this.items.filter(el => el.name).length)) return;
+      this.errors.date = !this.create.date;
+      this.errors.time = !this.create.time;
+      this.errors.items = this.tab !== 1 && !this.items.filter(el => el.name).length;
+      if (this.tab === 1) {
+        this.errors.name = !this.create.name || this.create.name.length > 255;
+        this.errors.address = !this.create.address;
+        this.errors.comment = !this.create.comment;
+      }
+
+      if (Object.values(this.errors).filter(Boolean).length) return;
+
       const params = { login: this.getLogin, ...(!!this.create.name && this.create), time: undefined, date: Date.parse(this.create.date+'T'+this.create.time)};
 
       if (this.items.filter(el => el.name).length) {
@@ -170,10 +199,20 @@ export default {
         date: date.getFullYear() + '-' + ('00' + (date.getMonth() + 1)).slice(-2) + '-' + ('00' + date.getDate()).slice(-2),
         time: ('00' + date.getHours()).slice(-2) + ':' + ('00' + date.getMinutes()).slice(-2)
       };
-      if (type !== 'meeting') this.items = [...element.items, {name: ''}];
+      if (type !== 'meeting') this.items = [...element.items, {name: '', done: 0}];
     },
     async updateThing() {
-      if (!this.create.date || !this.create.time || (!this.create.name && !this.items.filter(el => el.name).length)) return;
+      this.errors.date = !this.create.date;
+      this.errors.time = !this.create.time;
+      this.errors.items = this.tab !== 1 && !this.items.filter(el => el.name).length;
+      if (this.tab === 1) {
+        this.errors.name = !this.create.name;
+        this.errors.address = !this.create.address;
+        this.errors.comment = !this.create.comment;
+      }
+
+      if (Object.values(this.errors).filter(Boolean).length) return;
+
       const params = { login: this.getLogin, ...(!!this.create.name && this.create), id: undefined, time: undefined, date: Date.parse(this.create.date+'T'+this.create.time)};
 
       if (this.items.filter(el => el.name).length) {
@@ -196,12 +235,10 @@ export default {
       this.closeModal();
     },
     updateItems(ind) {
-      console.log(ind);
       if (ind+1 !== this.items.length) return;
-      this.items.push({name: ''});
+      this.items.push({name: '', done: 0});
     },
     removeItem(ind) {
-      console.log(ind);
       this.items.splice(ind, 1);
     },
     remove({ type, id }) {
@@ -210,6 +247,14 @@ export default {
     closeModal() {
       this.showModal = false;
       this.create = {};
+      this.errors = {
+        date: false,
+        time: false,
+        items: false,
+        name: false,
+        address: false,
+        comment: false
+      };
     }
   },
 };
@@ -221,7 +266,7 @@ export default {
 }
 
 .form__input {
-  width: calc(100% - 28px);
+  width: calc(100% - 40px);
 }
 
 .todo__info {
@@ -233,15 +278,19 @@ export default {
   text-align: center;
 }
 
-.map__editIcon {
+.map__removeIcon {
   width: 16px;
   height: 16px;
   vertical-align: middle;
 }
 
+.map__removeIcon:hover {
+  fill: red;
+}
+
 .button__create {
   display: block;
-  max-width: 320px;
+  min-width: 320px;
   margin: 10px auto 0;
 }
 
@@ -250,6 +299,14 @@ export default {
   padding: inherit;
   font-size: 28px;
   color: #000;
+}
+
+.button__list:disabled .map__removeIcon {
+  fill: var(--color-gray1);
+}
+
+.button__list:disabled {
+  cursor: default;
 }
 
 .button__list:hover {
@@ -291,7 +348,7 @@ export default {
     font-size: 32px;
   }
 
-  .map__editIcon {
+  .map__removeIcon {
     width: 16px;
     height: 16px;
     margin-top: 3px;
